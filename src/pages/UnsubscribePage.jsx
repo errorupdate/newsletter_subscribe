@@ -11,15 +11,18 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Alert,
 } from "@mui/material";
 
 const UnsubscribePage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [subscriptionType, setSubscriptionType] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Handler to be passed to UnsubscribeForm
   const handleUnsubscribeSuccess = (email, user) => {
@@ -29,11 +32,22 @@ const UnsubscribePage = () => {
     setOpen(true);
   };
 
+  // Handler for error
+  const handleUnsubscribeError = (msg) => {
+    setErrorMsg(msg || "Something went wrong. Please try again.");
+    setErrorOpen(true);
+  };
+
   const handleClose = () => {
     setOpen(false);
     setUserEmail("");
     setUserName("");
     setSubscriptionType("");
+  };
+
+  const handleErrorClose = () => {
+    setErrorOpen(false);
+    setErrorMsg("");
   };
 
   return (
@@ -128,7 +142,10 @@ const UnsubscribePage = () => {
             Unsubscribe
           </Typography>
         </Box>
-        <UnsubscribeForm onSuccess={handleUnsubscribeSuccess} />
+        <UnsubscribeForm
+          onSuccess={handleUnsubscribeSuccess}
+          onError={handleUnsubscribeError}
+        />
       </Card>
       <Typography
         variant="body2"
@@ -145,7 +162,7 @@ const UnsubscribePage = () => {
           ✨
         </span>
       </Typography>
-      {/* Confirmation Modal */}
+      {/* Success Dialog */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Unsubscribed Successfully</DialogTitle>
         <DialogContent>
@@ -160,6 +177,18 @@ const UnsubscribePage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} variant="contained" color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* Error Dialog */}
+      <Dialog open={errorOpen} onClose={handleErrorClose}>
+        <DialogTitle>Error</DialogTitle>
+        <DialogContent>
+          <Alert severity="error">{errorMsg}</Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleErrorClose} variant="contained" color="error">
             Close
           </Button>
         </DialogActions>
